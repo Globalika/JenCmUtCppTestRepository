@@ -5,7 +5,6 @@
 
 *.vcxproj
 *.vcxproj.filters
-*.sln
 
 #Directories
 .vs
