@@ -25,6 +25,13 @@ pipeline {
                 }
             }
         }
+        stage('Unit Tests') {
+            steps{
+                dir(env.REPO_NAME){
+                    bat "vstest.console TestSolution\\x64\\Debug\\LibraryUnitTests.dll"
+                }
+            }
+        }
     }
 
     post {
