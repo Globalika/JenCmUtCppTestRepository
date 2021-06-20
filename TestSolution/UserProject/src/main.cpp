@@ -1,8 +1,9 @@
 #include <iostream>
+#include "..\..\Library\src\Source.h"
+using namespace std;
 
 int main()
 {
-	//rtbrt
-	std::cout << "hello\n";
+	cout << Func(9) << "Hey\n";
 	return 0;
 }
