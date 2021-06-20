@@ -25,6 +25,13 @@ pipeline {
                 }
             }
         }
+        stage('Unit Tests') {
+            steps{
+                dir(env.REPO_NAME){
+                    bat "vstest.console TestSolution\\x64\\Debug\\LibraryUnitTests.dll"
+                }
+            }
+        }
     }
 
     post {
@@ -34,7 +41,7 @@ pipeline {
                 sendToTelegram(
                     env.CHAT_ID,
                     env.TELEGRAM_API_CREDENTIALS_ID,
-                    "success"
+                    "\\<b\\>SUCCSESS!\\</b\\>\\%0A\\<i\\>branch_${env.GIT_BRANCH}\\</i\\>\\%0A\\<i\\>build_${env.BUILD_NUMBER}\\</i\\>\\%0A\\<i\\>${env.BUILD_URL}\\</i\\>"
                 )
             }
         }
@@ -44,7 +51,7 @@ pipeline {
                 sendToTelegram(
                     env.CHAT_ID,
                     env.TELEGRAM_API_CREDENTIALS_ID,
-                    "failed"
+                    "\\<b\\>FAILED!\\</b\\>\\%0A\\<i\\>branch_${env.GIT_BRANCH}\\</i\\>\\%0A\\<i\\>build_${env.BUILD_NUMBER}\\</i\\>\\%0A\\<i\\>${env.BUILD_URL}\\</i\\>"
                 )
             }
         }
@@ -52,13 +59,12 @@ pipeline {
 
 }
 
-
 def sendToTelegram(chatId, credentialsId, messageText) {
     withCredentials([string(credentialsId: 'telegram-api-token', variable: 'TOKEN')]){
         sh """
             curl -X POST \
                 -H "Authorization: Bearer $TOKEN" \
-                http://35.193.109.110:5000/sendtotelegram/\\?chat_id\\=${chatId}\\&message\\=${messageText}
+                http://35.193.109.110:5000/sendtotelegram/\\?chat_id\\=${chatId}\\&message\\=${messageText}\\&parse_mode\\=HTML
         """
     }
 }
