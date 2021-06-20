@@ -21,6 +21,7 @@ pipeline {
         stage('Build') {
             steps{
                 dir(env.REPO_NAME){
+                    bat "nuget restore TestSolution\\TestSolution.sln"
 		            bat "msbuild TestSolution\\TestSolution.sln"
                 }
             }
