@@ -29,6 +29,7 @@ pipeline {
             steps{
                 dir(env.REPO_NAME){
                     bat "vstest.console TestSolution\\x64\\Debug\\LibraryUnitTests.dll"
+                    bat "TestSolution\\x64\\Debug\\LibraryGoogleTests.exe"
                 }
             }
         }
