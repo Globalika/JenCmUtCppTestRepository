@@ -41,7 +41,7 @@ pipeline {
                 sendToTelegram(
                     env.CHAT_ID,
                     env.TELEGRAM_API_CREDENTIALS_ID,
-                    "\\<b\\>SUCCSESS!\\</b\\>\\%0A\\<i\\>branch_${env.GIT_BRANCH}\\</i\\>\\%0A\\<i\\>build_${env.BUILD_NUMBER}\\</i\\>\\%0A\\<i\\>${env.BUILD_URL}\\</i\\>"
+                    "\\<b\\>SUCCESS!\\</b\\>\\%0A\\<i\\>branch_${env.GIT_BRANCH}\\</i\\>\\%0A\\<i\\>build_${env.BUILD_NUMBER}\\</i\\>\\%0A\\<i\\>${env.BUILD_URL}\\</i\\>"
                 )
             }
         }
