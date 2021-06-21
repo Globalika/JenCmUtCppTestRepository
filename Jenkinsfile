@@ -67,7 +67,7 @@ def sendToTelegram(chatId, credentialsId, messageText) {
             curl -X POST \
                  -H "Authorization: Bearer $TOKEN" \
                  -d "chat_id=${chatId}" \
-                 -d "message=${messageText}" \
+                 -d 'message=${messageText}' \
                  -d "parse_mode=HTML" \
                  http://35.193.109.110:5000/sendtotelegram/ >> /dev/null
         """
