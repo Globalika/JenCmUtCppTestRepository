@@ -43,7 +43,7 @@ pipeline {
                 sendToTelegram(
                     env.CHAT_ID,
                     env.TELEGRAM_API_CREDENTIALS_ID,
-                    "\\<b\\>SUCCESS!\\</b\\>\\%0A\\<i\\>branch_${env.GIT_BRANCH}\\</i\\>\\%0A\\<i\\>build_${env.BUILD_NUMBER}\\</i\\>\\%0A\\<i\\>${env.BUILD_URL}\\</i\\>"
+                    "<b>SUCCESS!</b>%0A<i>branch: ${env.GIT_BRANCH}</i>%0A<a href=\"${env.BUILD_URL}\">build ${env.BUILD_NUMBER}</a>"
                 )
             }
         }
@@ -53,7 +53,7 @@ pipeline {
                 sendToTelegram(
                     env.CHAT_ID,
                     env.TELEGRAM_API_CREDENTIALS_ID,
-                    "\\<b\\>FAILED!\\</b\\>\\%0A\\<i\\>branch_${env.GIT_BRANCH}\\</i\\>\\%0A\\<i\\>build_${env.BUILD_NUMBER}\\</i\\>\\%0A\\<i\\>${env.BUILD_URL}\\</i\\>"
+                    "<b>FAILURE!</b>%0A<i>branch: ${env.GIT_BRANCH}</i>%0A<a href=\"${env.BUILD_URL}\">build ${env.BUILD_NUMBER}</a>"
                 )
             }
         }
@@ -65,9 +65,11 @@ def sendToTelegram(chatId, credentialsId, messageText) {
     withCredentials([string(credentialsId: 'telegram-api-token', variable: 'TOKEN')]){
         sh """
             curl -X POST \
-                -H "Authorization: Bearer $TOKEN" \
-                http://35.193.109.110:5000/sendtotelegram/\\?chat_id\\=${chatId}\\&message\\=${messageText}\\&parse_mode\\=HTML >> /dev/null
-
+                 -H "Authorization: Bearer $TOKEN" \
+                 -d "chat_id=${chatId}" \
+                 -d "message=${messageText}" \
+                 -d "parse_mode=HTML" \
+                 http://35.193.109.110:5000/sendtotelegram/ >> /dev/null
         """
     }
 }
