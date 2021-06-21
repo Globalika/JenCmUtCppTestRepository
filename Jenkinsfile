@@ -21,7 +21,7 @@ pipeline {
         stage('Build') {
             steps{
                 dir(env.REPO_NAME){
-                    bat "xcopy C:\\Users\\Lv-557\\.nuget\\packages\\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.3 TestSolution\\packages\\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.3 /E /i /s"
+                    bat "nuget restore TestSolution\\TestSolution.sln"
 		            bat "msbuild TestSolution\\TestSolution.sln"
                 }
             }
