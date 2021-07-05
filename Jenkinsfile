@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         REPO_NAME = 'JenCmUtCppTestRepository'
-        CHAT_ID = '676352139'
+        CHAT_ID = '231399891'
         TELEGRAM_API_CREDENTIALS_ID = 'telegram-api-token'
     }
 
@@ -21,7 +21,7 @@ pipeline {
         stage('Build') {
             steps{
                 dir(env.REPO_NAME){
-                    bat "nuget restore TestSolution\\TestSolution.sln"
+                    //bat "nuget restore TestSolution\\TestSolution.sln"
 		            bat "msbuild TestSolution\\TestSolution.sln"
                 }
             }
@@ -30,7 +30,7 @@ pipeline {
             steps{
                 dir(env.REPO_NAME){
                     bat "vstest.console TestSolution\\x64\\Debug\\LibraryUnitTests.dll"
-                    bat "TestSolution\\x64\\Debug\\LibraryGoogleTests.exe"
+                    //bat "TestSolution\\x64\\Debug\\LibraryGoogleTests.exe"
                 }
             }
         }
