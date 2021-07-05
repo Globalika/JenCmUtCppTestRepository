@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         REPO_NAME = 'JenCmUtCppTestRepository'
-        CHAT_ID = '231399891'
+        CHAT_ID = '501468350'
         TELEGRAM_API_CREDENTIALS_ID = 'telegram-api-token'
     }
 
