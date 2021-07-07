@@ -3,17 +3,18 @@ pipeline {
     
     environment {
         REPO_NAME = 'JenCmUtCppTestRepository'
-        CHAT_ID = '-501468350'
+        CHAT_ID = '676352139'
         TELEGRAM_API_CREDENTIALS_ID = 'telegram-api-token'
+        EMAIL_RECIPIENTS = 'volodymyr.seredovych@gmail.com'
     }
 
     stages {
         stage('Checkout repository') {
             steps {
                 dir(env.REPO_NAME){
-                    // Clean workspace
+                    echo "Clean Workspace"
                     cleanWs()
-                    // To clone and checkout scm job repo
+                    echo "Clone and checkout scm job repository"
                     checkout scm
                 }
             }
@@ -21,16 +22,29 @@ pipeline {
         stage('Build') {
             steps{
                 dir(env.REPO_NAME){
-                    //bat "nuget restore TestSolution\\TestSolution.sln"
+                    echo "restore naget packages"
+                    bat "nuget restore TestSolution\\TestSolution.sln"
+                    echo "build solution"
 		            bat "msbuild TestSolution\\TestSolution.sln"
+                }
+            }
+        }
+        stage('Static Analize with PVS-Studio')
+        {
+            steps{
+                dir(env.REPO_NAME){
+                    echo "Analize Solution"
+                    //bat "PVS-Studio_Cmd.exe -t TestSolution\\TestSolution.sln -o TestSolution\\x64\\Debug\\report.plog --progress"
                 }
             }
         }
         stage('Unit Tests') {
             steps{
                 dir(env.REPO_NAME){
+                    echo "execute native unit tests"
                     bat "vstest.console TestSolution\\x64\\Debug\\LibraryUnitTests.dll"
-                    //bat "TestSolution\\x64\\Debug\\LibraryGoogleTests.exe"
+                    echo "execute google unit tests"
+                    bat "TestSolution\\x64\\Debug\\LibraryGoogleUnitTests.exe"
                 }
             }
         }
@@ -40,6 +54,9 @@ pipeline {
         success {
             archiveArtifacts artifacts: "${env.REPO_NAME}/TestSolution/x64/Debug/*", fingerprint: true
             script {
+                mail to: emailRecipients,
+                    subject: "SUCCESS!",
+                    body:" branch: ${env.GIT_BRANCH} \n build: ${env.BUILD_NUMBER} \n ${env.BUILD_URL} "
                 sendToTelegram(
                     env.CHAT_ID,
                     env.TELEGRAM_API_CREDENTIALS_ID,
@@ -47,9 +64,16 @@ pipeline {
                 )
             }
         }
-
+        always {
+            recordIssues enabledForFailure: true, tool: msBuild()
+            //recordIssues enabledForFailure: true, sourceCodeEncoding:'UTF-8',
+            //    tool: PVSStudio(pattern: 'report.plog')
+        }
         failure {
             script{
+                mail to: env.EMAIL_RECIPIENTS,
+                    subject: "FAILURE!",
+                    body:" branch: ${env.GIT_BRANCH} \n build: ${env.BUILD_NUMBER} \n ${env.BUILD_URL} "
                 sendToTelegram(
                     env.CHAT_ID,
                     env.TELEGRAM_API_CREDENTIALS_ID,
