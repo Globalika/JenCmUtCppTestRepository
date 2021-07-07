@@ -22,7 +22,7 @@ pipeline {
         stage('Build') {
             steps{
                 dir(env.REPO_NAME){
-                    echo "restore naget packages"
+                    echo "restore nuget packages"
                     bat "nuget restore TestSolution\\TestSolution.sln"
                     echo "build solution"
 		            bat "msbuild TestSolution\\TestSolution.sln"
@@ -34,7 +34,7 @@ pipeline {
             steps{
                 dir(env.REPO_NAME){
                     echo "Analize Solution"
-                    //bat "PVS-Studio_Cmd.exe -t TestSolution\\TestSolution.sln -o TestSolution\\x64\\Debug\\report.plog --progress"
+                    bat "PVS-Studio_Cmd.exe -t TestSolution\\TestSolution.sln -o report.plog --progress"
                 }
             }
         }
@@ -54,7 +54,7 @@ pipeline {
         success {
             archiveArtifacts artifacts: "${env.REPO_NAME}/TestSolution/x64/Debug/*", fingerprint: true
             script {
-                mail to: emailRecipients,
+                mail to: env.EMAIL_RECIPIENTS,
                     subject: "SUCCESS!",
                     body:" branch: ${env.GIT_BRANCH} \n build: ${env.BUILD_NUMBER} \n ${env.BUILD_URL} "
                 sendToTelegram(
@@ -66,8 +66,8 @@ pipeline {
         }
         always {
             recordIssues enabledForFailure: true, tool: msBuild()
-            //recordIssues enabledForFailure: true, sourceCodeEncoding:'UTF-8',
-            //    tool: PVSStudio(pattern: 'report.plog')
+            recordIssues enabledForFailure: true, sourceCodeEncoding:'UTF-8',
+                tool: PVSStudio(pattern: "${env.REPO_NAME}\\report.plog")
         }
         failure {
             script{
