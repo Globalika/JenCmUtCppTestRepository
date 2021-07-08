@@ -19,7 +19,7 @@ pipeline {
                 }
             }
         }
-        stage('Static Analize') {
+        stage('Static Analysis') {
             steps{
                 dir(env.REPO_NAME){
                     echo "Analize Solution"
