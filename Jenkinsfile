@@ -9,13 +9,21 @@ pipeline {
     }
 
     stages {
-        stage('Checkout repository') {
+        stage('Checkout Repository') {
             steps {
                 dir(env.REPO_NAME){
                     echo "Clean Workspace"
                     cleanWs()
                     echo "Clone and checkout scm job repository"
                     checkout scm
+                }
+            }
+        }
+        stage('Static Analize') {
+            steps{
+                dir(env.REPO_NAME){
+                    echo "Analize Solution"
+                    bat "PVS-Studio_Cmd.exe -t TestSolution\\TestSolution.sln -E LibraryGoogleUnitTests -o report.plog --progress"
                 }
             }
         }
@@ -29,15 +37,7 @@ pipeline {
                 }
             }
         }
-        stage('Static Analize with PVS-Studio')
-        {
-            steps{
-                dir(env.REPO_NAME){
-                    echo "Analize Solution"
-                    bat "PVS-Studio_Cmd.exe -t TestSolution\\TestSolution.sln -o report.plog --progress"
-                }
-            }
-        }
+
         stage('Unit Tests') {
             steps{
                 dir(env.REPO_NAME){
@@ -52,11 +52,19 @@ pipeline {
 
     post {
         success {
-            archiveArtifacts artifacts: "${env.REPO_NAME}/TestSolution/x64/Debug/*", fingerprint: true
             script {
-                mail to: env.EMAIL_RECIPIENTS,
+                archiveArtifacts(
+                    artifacts: "${env.REPO_NAME}/TestSolution/x64/Debug/*",
+                    fingerprint: true
+                )
+            }
+
+            script {
+                mail(
+                    to: env.EMAIL_RECIPIENTS,
                     subject: "SUCCESS!",
                     body:" branch: ${env.GIT_BRANCH} \n build: ${env.BUILD_NUMBER} \n ${env.BUILD_URL} "
+                )
                 sendToTelegram(
                     env.CHAT_ID,
                     env.TELEGRAM_API_CREDENTIALS_ID,
@@ -65,15 +73,23 @@ pipeline {
             }
         }
         always {
-            recordIssues enabledForFailure: true, tool: msBuild()
-            recordIssues enabledForFailure: true, sourceCodeEncoding:'UTF-8',
+            recordIssues(
+                enabledForFailure: true,
+                tool: msBuild()
+            )
+            recordIssues(
+                enabledForFailure: true,
+                sourceCodeEncoding:'UTF-8',
                 tool: PVSStudio(pattern: "${env.REPO_NAME}\\report.plog")
+            )
         }
         failure {
             script{
-                mail to: env.EMAIL_RECIPIENTS,
+                mail(
+                    to: env.EMAIL_RECIPIENTS,
                     subject: "FAILURE!",
-                    body:" branch: ${env.GIT_BRANCH} \n build: ${env.BUILD_NUMBER} \n ${env.BUILD_URL} "
+                    body:"branch: ${env.GIT_BRANCH}\nbuild: ${env.BUILD_NUMBER}\n${env.BUILD_URL}"
+                )
                 sendToTelegram(
                     env.CHAT_ID,
                     env.TELEGRAM_API_CREDENTIALS_ID,

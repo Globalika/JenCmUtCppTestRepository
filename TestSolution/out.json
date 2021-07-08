@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "warnings": [
+    {
+      "code": "V112",
+      "cwe": 0,
+      "level": 2,
+      "positions": [
+        {
+          "file": "C:\\Users\\volod\\source\\JenCmUtCppTestRepository\\TestSolution\\LibraryUnitTests\\tests\\LibraryUnitTests.cpp",
+          "line": 17,
+          "endLine": 17,
+          "column": 1,
+          "endColumn": 2147483647,
+          "navigation": {
+            "previousLine": 123,
+            "currentLine": 1686208654,
+            "nextLine": 125,
+            "columns": 0
+          }
+        }
+      ],
+      "projects": [
+        "LibraryUnitTests"
+      ],
+      "message": "Dangerous magic number 4 used: ...t::AreEqual(4, Func(4));.",
+      "favorite": false,
+      "falseAlarm": false
+    }
+  ]
+}
