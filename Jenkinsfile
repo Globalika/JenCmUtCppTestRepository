@@ -102,7 +102,7 @@ pipeline {
 }
 
 def sendToTelegram(chatId, credentialsId, messageText) {
-    withCredentials([string(credentialsId: 'telegram-api-token', variable: 'TOKEN')]){
+    withCredentials([string(credentialsId: credentialsId, variable: 'TOKEN')]){
         sh """
             curl -X POST \
                  -H "Authorization: Bearer $TOKEN" \
