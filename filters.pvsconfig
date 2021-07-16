@@ -1,0 +1,2 @@
+# Excluding directories from the analysis:
+# //V_EXCLUDE_PATH \TestSolution\packages\

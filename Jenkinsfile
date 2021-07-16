@@ -23,7 +23,7 @@ pipeline {
             steps{
                 dir(env.REPO_NAME){
                     echo "Analize Solution"
-                    bat "PVS-Studio_Cmd.exe -t TestSolution\\TestSolution.sln -E LibraryGoogleUnitTests -o report.plog --progress"
+                    bat "PVS-Studio_Cmd.exe -t TestSolution\\TestSolution.sln -C filters.pvsconfig -o report.plog --progress"
                 }
             }
         }
